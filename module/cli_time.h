@@ -1,7 +1,7 @@
 #ifndef _TERMINAL_TIME_H_
 #define _TERMINAL_TIME_H_
 
-#include "terminal_config.h"
+#include "../terminal_config.h"
 
 #define CLI_GetMs()			((float) CLI_GetUs() / 1000)	// System time in ms
 

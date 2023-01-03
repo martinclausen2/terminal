@@ -1,5 +1,5 @@
 #include "cli_string.h"
-#include "terminal_config.h"
+#include "../terminal_config.h"
 
 void _strcpy(const char* src, uint16_t offsetSrc, char* dst, uint16_t offsetDst, uint16_t length);
 char* _trim(const char* src);

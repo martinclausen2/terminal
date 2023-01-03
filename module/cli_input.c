@@ -1,7 +1,7 @@
 #include "cli_input.h"
 
-#include "lib/cli_queue.h"
-#include "lib/cli_string.h"
+#include "../lib/cli_queue.h"
+#include "../lib/cli_string.h"
 
 extern uint32_t _strlen(const char* strSrc);
 

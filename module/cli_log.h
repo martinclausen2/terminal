@@ -1,7 +1,7 @@
 #ifndef _TERMINAL_LOG_H_
 #define _TERMINAL_LOG_H_
 
-#include "terminal_config.h"
+#include "../terminal_config.h"
 
 #include <stdint.h>
 #include <stdbool.h>

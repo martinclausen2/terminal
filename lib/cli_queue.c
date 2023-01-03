@@ -1,5 +1,5 @@
 #include "cli_queue.h"
-#include "terminal_config.h"
+#include "../terminal_config.h"
 
 #include "stdlib.h"
 #include "string.h"
