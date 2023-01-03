@@ -111,18 +111,6 @@ int main(void)
 
 		CLI_Execute();
 
-
-//		GLOBAL_settings_ptr->ExtBrightness_last++;
-
-//	    SettingsWrite();
-		// Wait for 2000 ms
-//		HAL_Delay(2000);
-
-//		SettingsRead();
-
-//		printf("PWM_ExtBrightness_last %u, revision %u\n\r", (uint)GLOBAL_settings_ptr->ExtBrightness_last, (uint)GLOBAL_settings_ptr->revision);
-
-
 		// Rinse and repeat :)
     /* USER CODE END WHILE */
 

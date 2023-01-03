@@ -1,4 +1,3 @@
-*.o
 /examples/Coocox_stm32f4/stm32f4_terminal_example/Debug/bin/history.xml
 /examples/Coocox_stm32f4/stm32f4_terminal_example/Debug/bin/stm32f4_terminal_example.map
 /examples/Coocox_stm32f4/stm32f4_terminal_example/Debug/obj/history.xml
@@ -14,3 +13,12 @@
 /examples/Coocox_lcp1227/lpc1227/Debug/bin/lpc1227.elf
 /examples/Coocox_lcp1227/lpc1227/Debug/bin/lpc1227.hex
 /examples/Coocox_lcp1227/lpc1227/lpc1227.elf.xcodeproj/project.pbxproj
+
+# STM32Cube copied library and project folders
+/examples/STM32CubeIDE_NUCLEO-L152RE/Drivers/*
+/examples/STM32CubeIDE_NUCLEO-L152RE/Debug/*
+
+# build artefacts
+*.bin
+*.elf
+*.o

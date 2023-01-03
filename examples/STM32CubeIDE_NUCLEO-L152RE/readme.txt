@@ -1,0 +1,1 @@
+excute code generation in STM32CubeIDE (Menu Project=>Generate Code) to create Drivers
