@@ -31,6 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -42,15 +43,17 @@
 CRC_HandleTypeDef hcrc;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_rx;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
-uint8_t rxchar[127];
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
@@ -91,6 +94,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_CRC_Init();
   /* USER CODE BEGIN 2 */
@@ -98,7 +102,8 @@ int main(void)
   CLI_Init(TDC_Time);
 
   Cmds_Init();
-  HAL_UART_Receive_IT(&huart2, &rxchar ,1);
+
+  TUSART_StartReception();
 
   /* USER CODE END 2 */
 
@@ -222,6 +227,25 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
+  /* DMA1_Channel7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -256,18 +280,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if (huart->Instance == huart2.Instance)
-	{
-		uint8_t *ptr = huart->pRxBuffPtr-1;
-		//TODO loop for size
-		char c = (char)*ptr;
-		CLI_EnterChar(c);
-		HAL_UART_Receive_IT(&huart2, &rxchar ,1);
-	}
-}
-
 /**
   * @brief  Retargets the C library printf function to the USART.
   * @param  None
@@ -281,6 +293,20 @@ PUTCHAR_PROTOTYPE
 
   return ch;
 }
+
+/**
+  * @brief  User implementation of the Reception Event Callback
+  *         (Rx event notification called after use of advanced reception service).
+  * @param  huart UART handle
+  * @param  Size  Number of data available in application reception buffer (indicates a position in
+  *               reception buffer until which, data are available)
+  * @retval None
+  */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+	TUSART_UARTEx_RxEventCallback(Size);
+}
+
 /* USER CODE END 4 */
 
 /**

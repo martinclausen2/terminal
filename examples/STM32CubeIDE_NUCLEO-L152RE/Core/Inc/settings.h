@@ -30,6 +30,7 @@ typedef struct {
   unsigned int ExtBrightness_last;		//external brightness during lights off divided by 256
   unsigned char Brightness_start[4];	//value before lights off
   unsigned char minBrightness[4];		//minimum brightness after power on and recalculation using measured brightness
+  unsigned char maxBrightness[4];		//maximum brightness
   unsigned char AlarmBrightness[4];		//maximum brightness targeted during alarm
   unsigned int PWM_Offset[4];			//PWM value, where the driver effectively starts to generate an output
   unsigned char LightFading;			//Minutes to fade light in

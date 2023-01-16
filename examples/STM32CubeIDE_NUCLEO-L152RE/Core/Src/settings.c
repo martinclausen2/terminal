@@ -98,6 +98,10 @@ static void SettingsReset2Defaults(void){
     GLOBAL_settings_ptr->minBrightness[1] = 7;			//minimum brightness after power on and recalculation using measured brightness
     GLOBAL_settings_ptr->minBrightness[2] = 7;			//minimum brightness after power on and recalculation using measured brightness
     GLOBAL_settings_ptr->minBrightness[3] = 7;			//minimum brightness after power on and recalculation using measured brightness
+    GLOBAL_settings_ptr->maxBrightness[0] = 100;		//maximum brightness
+    GLOBAL_settings_ptr->maxBrightness[1] = 100;		//maximum brightness
+    GLOBAL_settings_ptr->maxBrightness[2] = 100;		//maximum brightness
+    GLOBAL_settings_ptr->maxBrightness[3] = 100;		//maximum brightness
     GLOBAL_settings_ptr->AlarmBrightness[0] = 0x80;		//maximum brightness targeted during alarm
 	GLOBAL_settings_ptr->AlarmBrightness[1] = 0x80;		//maximum brightness targeted during alarm
 	GLOBAL_settings_ptr->AlarmBrightness[2] = 0x80;		//maximum brightness targeted during alarm
