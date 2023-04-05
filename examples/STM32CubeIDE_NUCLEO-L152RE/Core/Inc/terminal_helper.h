@@ -12,8 +12,6 @@
 #include "../terminal/terminal_config.h"
 #include "../terminal/commands.h"
 
-extern UART_HandleTypeDef huart2;
-
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 
 /* Size of Reception buffer */
@@ -27,6 +25,8 @@ extern UART_HandleTypeDef huart2;
     __typeof__ (b) _b = (b); \
     _a < _b ? _a : _b;       \
 })
+
+void Init_Terminal(UART_HandleTypeDef *handle_huart);
 
 void _reset_fcn();
 

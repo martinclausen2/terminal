@@ -1,6 +1,8 @@
 /*
  * terminal_helper.c
  *
+ * controller specific implementations
+ *
  *  Created on: 30.12.2022
  *      Author: Martin
  */
@@ -23,6 +25,17 @@ __IO uint32_t     uwNbReceivedChars;
 uint8_t *pBufferReadyForUser;
 uint8_t *pBufferReadyForReception;
 
+UART_HandleTypeDef *huart_terminal;
+
+void Init_Terminal(UART_HandleTypeDef *handle_huart)
+{
+	huart_terminal = handle_huart;
+    CLI_Init(TDC_Time);
+	Cmds_Init();
+	TUSART_StartReception();
+};
+
+
 void _reset_fcn()
 {
 	NVIC_SystemReset();
@@ -33,10 +46,10 @@ void _reset_fcn()
 inline void TUSART_PutChar(char c)
 {
 	// check if previous transmission is ongoing
-	while(huart2.gState != HAL_UART_STATE_READY){}
+	while(huart_terminal->gState != HAL_UART_STATE_READY){}
 	// copy content into reserved memory
 	memcpy((uint8_t*)&aTXBuffer, (uint8_t *)&c, 1);
-	while(HAL_BUSY == HAL_UART_Transmit_DMA(&huart2, (uint8_t*)&aTXBuffer, 1)) {}
+	while(HAL_BUSY == HAL_UART_Transmit_DMA(huart_terminal, (uint8_t*)&aTXBuffer, 1)) {}
 }
 
 // TODO add FIFO to aggregate char before sending and avoid waiting for empty buffer.
@@ -45,10 +58,10 @@ void TUSART_Print(const char* str)
 	//determine size and limit to buffer size
 	unsigned int length = min(strlen(str), TX_BUFFER_SIZE);
 	// check if previous transmission is ongoing
-	while(huart2.gState != HAL_UART_STATE_READY){}
+	while(huart_terminal->gState != HAL_UART_STATE_READY){}
 	// copy content into reserved memory
 	memcpy((uint8_t*)&aTXBuffer, str, length);
-	while(HAL_BUSY == HAL_UART_Transmit_DMA(&huart2, (uint8_t*)&aTXBuffer, length)){}
+	while(HAL_BUSY == HAL_UART_Transmit_DMA(huart_terminal, (uint8_t*)&aTXBuffer, length)){}
 }
 
 /**
@@ -76,7 +89,7 @@ void TUSART_StartReception(void)
      - IDLE event on UART Rx line (indicating a pause is UART reception flow)
      => make sure to enable both DMA and UART interrupts
   */
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart2, aRXBufferUser, RX_BUFFER_SIZE);
+  HAL_UARTEx_ReceiveToIdle_DMA(huart_terminal, aRXBufferUser, RX_BUFFER_SIZE);
 }
 
 

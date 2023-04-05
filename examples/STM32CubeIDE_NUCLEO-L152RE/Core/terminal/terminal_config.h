@@ -54,7 +54,7 @@ extern void _reset_fcn();
 #define TERM_TX_RX_DEB_EN				(0)			// Addition debug printf
 #define TERM_CMD_LOG_EN					(1)			// Command logging
 #define TERM_CMD_AUTOCMPLT_EN			(1)			// Command AutoComplete
-#define TERM_LR_KEY_EN					(1)			// Move cursor left-rigth
+#define TERM_LR_KEY_EN					(1)			// Move cursor left-right
 #define TERM_DEFAULT_ALLOC_EN			(1)			// Default Memory Allocate functions
 #define TERM_DEFAULT_STRING_EN			(1)			// Default String functions
 #define TERM_PRINT_ERROR_EXEC_EN		(1)			// Print error after execute command
