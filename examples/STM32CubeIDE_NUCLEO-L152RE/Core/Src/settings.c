@@ -15,8 +15,6 @@ static settings_t _settings_in_ram;
 
 settings_t *GLOBAL_settings_ptr = &_settings_in_ram;
 
-static void SettingsReset2Defaults(void);
-
 void SettingsInit(CRC_HandleTypeDef *handle_crc)
 {
 	hcrc_settings = handle_crc;
@@ -80,7 +78,7 @@ uint32_t SettingsWrite(void){
     return 0;
 }
 
-static void SettingsReset2Defaults(void){
+void SettingsReset2Defaults(void){
     memset(GLOBAL_settings_ptr, 0, sizeof(settings_t));
 
     GLOBAL_settings_ptr->revision = 0;

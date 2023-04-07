@@ -101,6 +101,7 @@ int main(void)
   SettingsInit(&hcrc);
 
   Init_Terminal(&huart2);
+  SettingsCommands_Init();
 
   /* USER CODE END 2 */
 

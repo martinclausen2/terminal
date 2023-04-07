@@ -31,7 +31,6 @@ void Init_Terminal(UART_HandleTypeDef *handle_huart)
 {
 	huart_terminal = handle_huart;
     CLI_Init(TDC_Time);
-	SettingsCommands_Init();
 	TUSART_StartReception();
 };
 

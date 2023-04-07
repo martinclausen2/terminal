@@ -8,8 +8,6 @@
 #ifndef INC_TERMINAL_HELPER_H_
 #define INC_TERMINAL_HELPER_H_
 
-#include <settingscommands.h>
-
 #include "../terminal/terminal.h"
 #include "../terminal/terminal_config.h"
 

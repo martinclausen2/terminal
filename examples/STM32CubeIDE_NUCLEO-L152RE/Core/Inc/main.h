@@ -32,6 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "settings.h"
+#include "settingscommands.h"
 #include "terminal_helper.h"
 
 /* USER CODE END Includes */
