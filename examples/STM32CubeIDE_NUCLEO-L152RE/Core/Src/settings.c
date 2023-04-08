@@ -113,14 +113,14 @@ void SettingsReset2Defaults(void){
     GLOBAL_settings_ptr->AlarmTimeSnooze = 6;			//Snooze Time
     GLOBAL_settings_ptr->BeepVolume = 0x40;				//Volume of the key beep
 
-    alarm_t alarms[7] = {
-    		{ 0, 6, 20 },
+    alarm_t alarms[maxAlarm] = {
     		{ 1, 6, 20 },
     		{ 2, 6, 20 },
     		{ 3, 6, 20 },
     		{ 4, 6, 20 },
-    		{ 5, 7, 20 },
-    		{ 6, 7, 20 }
+    		{ 5, 6, 20 },
+    		{ 6, 7, 20 },
+    		{ 7, 7, 20 }
     };
 
     memcpy(GLOBAL_settings_ptr->Alarm, alarms, sizeof alarms);

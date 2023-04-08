@@ -15,6 +15,21 @@
 #include <assert.h>
 
 #define maxChannel 4
+#define maxAlarm 7
+#define maxRC5Addr 31
+#define maxComMode 3
+#define maxLightFading 30
+#define minLCDContrast 0x05
+#define maxLCDContrast 0x0F
+
+static char *WeekdayNames[10] = {"off","Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "all"};
+
+static char *ComModetext[10] = {"Off      ", "Alarm    ", "Condional", "All      "};
+
+#define ComModeOff	0
+#define ComModeAlarm	1
+#define ComModeConditional	2
+#define ComModeAll	3
 
 typedef struct {
 	unsigned char weekday;
@@ -39,10 +54,9 @@ typedef struct {
   unsigned char AlarmTime2Signal;		//Delay after alarm until noise is being generated
   unsigned char AlarmTimeSnooze;		//Snooze Time
   unsigned char BeepVolume;				//Volume of the key beep
-  alarm_t Alarm[7];
+  alarm_t Alarm[maxAlarm];
   uint32_t crc32;
 } settings_t;
-
 
 extern settings_t *GLOBAL_settings_ptr;
 
