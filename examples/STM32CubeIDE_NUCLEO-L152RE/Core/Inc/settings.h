@@ -15,16 +15,19 @@
 #include <assert.h>
 
 #define maxChannel 4
-#define maxAlarm 7
+#define maxBrightnessLimit 100
+#define maxBeepVolume 100
 #define maxRC5Addr 31
 #define maxComMode 3
 #define maxLightFading 30
 #define minLCDContrast 0x05
 #define maxLCDContrast 0x0F
+#define maxAlarm 7
+#define maxWeekday 8
 
 static char *WeekdayNames[10] = {"off","Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "all"};
 
-static char *ComModetext[10] = {"Off      ", "Alarm    ", "Condional", "All      "};
+static char *ComModetext[10] = {"Off", "Alarm", "Condional", "All"};
 
 #define ComModeOff	0
 #define ComModeAlarm	1
