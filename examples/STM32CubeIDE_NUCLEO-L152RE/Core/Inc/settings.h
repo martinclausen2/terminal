@@ -25,9 +25,9 @@
 #define maxAlarm 7
 #define maxWeekday 8
 
-static char *WeekdayNames[10] = {"off","Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "all"};
+static const char *WeekdayNames[10] = {"off","Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "all"};
 
-static char *ComModetext[10] = {"Off", "Alarm", "Condional", "All"};
+static const char *ComModetext[10] = {"Off", "Alarm", "Condional", "All"};
 
 #define ComModeOff	0
 #define ComModeAlarm	1
