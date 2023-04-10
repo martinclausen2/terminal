@@ -11,26 +11,24 @@
 #include "stm32l1xx_hal.h"
 #include "settings.h"
 
-//the following three values have to be held consistend manually!
-#define skipAlarmStepping 3		//2^skipAlarmStepping number of steps required to change skipAlarmCnt, should multiplied by maxAlarm not exceed unsigned char
-#define skipAlarmhalfStep 4		// = (2^(skipAlarmStepping-1)   savety margin to alow for backlight, but avoid alarm change
-#define skipAlarmMask 0xF8		// = (0x100-(2^skipAlarmStepping))
-
 #define minutesinhour 60
 #define hoursinday 24
 #define minutesinday minutesinhour*hoursinday
 #define daysinweek 7
 #define alldays 8
+#define noPendingAlarm -1
 
 extern RTC_HandleTypeDef hrtc;
 
-extern RTC_TimeTypeDef sTimeRtc;
-extern RTC_DateTypeDef sDateRtc;
+extern RTC_TimeTypeDef timeRtc;
+extern RTC_DateTypeDef dateRtc;
+extern RTC_AlarmTypeDef alarmRtc;
 
 typedef struct {
 	unsigned int skipAlarmCnt;
 	unsigned int maxskipAlarmCnt;
 	bool alarmFlag;
+	unsigned int nextAlarmIndex;
 } alarmState_t;
 
 extern alarmState_t alarmState;
@@ -38,7 +36,8 @@ extern alarmState_t alarmState;
 HAL_StatusTypeDef Rtc_GetDateTime();
 HAL_StatusTypeDef Rtc_SetDate();
 HAL_StatusTypeDef Rtc_SetTime();
-
-unsigned int Find_NextAlarm();
+HAL_StatusTypeDef Rtc_GetAlarm();
+HAL_StatusTypeDef Rtc_SetAlarm();
+void Find_NextAlarm();
 
 #endif /* INC_RTC_H_ */

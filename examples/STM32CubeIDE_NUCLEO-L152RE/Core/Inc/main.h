@@ -34,6 +34,7 @@ extern "C" {
 #include "settings.h"
 #include "settingscommands.h"
 #include "terminal_helper.h"
+#include "rtc.h"
 
 /* USER CODE END Includes */
 

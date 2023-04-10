@@ -16,6 +16,7 @@ uint8_t SetTimeCmd();
 uint8_t GetTimestampCmd();
 uint8_t AlarmSettingsCmd();
 uint8_t AlarmScheduleCmd();
+uint8_t AlarmCmd();
 uint8_t SetBeepVolumeCmd();
 uint8_t ResetSettingsCmd();
 

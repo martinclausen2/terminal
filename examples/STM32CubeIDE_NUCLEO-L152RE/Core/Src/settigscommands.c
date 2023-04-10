@@ -10,6 +10,7 @@ void SettingsCommands_Init()
 	CLI_AddCmd("timestamp", GetTimestampCmd, 0, TMC_None, "get date and time from RTC");
 	CLI_AddCmd("alarmschedule", AlarmScheduleCmd, 1, TMC_None, "set alarm schedule - [alarm no] <-w weekday> <-h hour> <-m minute>");
 	CLI_AddCmd("alarmsetting", AlarmSettingsCmd, 0, TMC_None, "set alarm parameters - <-f time to fade-in light> <-si time to signal> <-sn snooze time>");
+	CLI_AddCmd("alarm", AlarmCmd, 0, TMC_None, "set alarm skip count - <-s alarm skip count>");
 	CLI_AddCmd("beep", 	SetBeepVolumeCmd, 0, TMC_None, "set beep volume - <-v volume>");
 	CLI_AddCmd("reset", ResetSettingsCmd, 0, TMC_None, "reset settings to factory defaults");
 }
@@ -31,6 +32,29 @@ void printIntValueArray(unsigned int(*values)[maxChannel])
 		CLI_Printf("\r\nchannel: %d value: %d", i, (int)*(*values+i));
 	};
 }
+
+
+char* printMinuteOff(char* str, unsigned char Value)
+{
+	if (0==Value)
+		{
+		strcpy(str, "off");
+		}
+	else if (1==Value)
+		{
+		strcpy(str, "instantly");
+		}
+	else if (2==Value)
+		{
+		strcpy(str, "1 min.");
+		}
+	else
+		{
+		sprintf(str, "%2d min.", Value-1);
+		}
+	return &(str[0]);
+}
+
 
 // ***************** implementation commands ****************
 
@@ -157,9 +181,9 @@ uint8_t SetTimeCmd()
 			IS_RTC_SECONDS(sTimeRtcTemp.Seconds))
 	{
 		//copy over values being assigned
-		sTimeRtc.Hours = sTimeRtcTemp.Hours;
-		sTimeRtc.Minutes = sTimeRtcTemp.Minutes;
-		sTimeRtc.Seconds = sTimeRtcTemp.Seconds;
+		timeRtc.Hours = sTimeRtcTemp.Hours;
+		timeRtc.Minutes = sTimeRtcTemp.Minutes;
+		timeRtc.Seconds = sTimeRtcTemp.Seconds;
 		Rtc_SetTime();
 		GetTimestampCmd();
 		return TE_OK;
@@ -181,7 +205,7 @@ uint8_t SetDateCmd()
 			IS_RTC_DATE(sDateRtcTemp.Date) &
 			IS_RTC_WEEKDAY(sDateRtcTemp.WeekDay))
 	{
-		sDateRtc = sDateRtcTemp;
+		dateRtc = sDateRtcTemp;
 		Rtc_SetDate();
 		GetTimestampCmd();
 		return TE_OK;
@@ -193,8 +217,8 @@ uint8_t GetTimestampCmd()
 {
 	Rtc_GetDateTime();
 	CLI_Printf("\r\nTimestamp: %02d-%02d-%02d %s %02d:%02d:%02d",
-			sDateRtc.Date, sDateRtc.Month, sDateRtc.Date, WeekdayNames[sDateRtc.WeekDay],
-			sTimeRtc.Hours, sTimeRtc.Minutes, sTimeRtc.Seconds)
+			dateRtc.Date, dateRtc.Month, dateRtc.Date, WeekdayNames[dateRtc.WeekDay],
+			timeRtc.Hours, timeRtc.Minutes, timeRtc.Seconds)
 	return TE_OK;
 }
 
@@ -203,6 +227,8 @@ uint8_t AlarmSettingsCmd()
 	uint32_t fading = 0;
 	uint32_t signal = 0;
 	uint32_t snooze = 0;
+	char strf[12];
+	char strsi[12];
 
 	// optional arguments
 	if (CLI_GetArgDecByFlag("-f", &fading))
@@ -218,12 +244,12 @@ uint8_t AlarmSettingsCmd()
 		GLOBAL_settings_ptr->AlarmTimeSnooze = (uint8_t)snooze;
 	}
 
-	CLI_Printf("\r\ntime to fade-in light: %d min., time to signal: %d min., snooze time: %d min.",
-			(int)GLOBAL_settings_ptr->LightFading,
-			(int)GLOBAL_settings_ptr->AlarmTime2Signal,
-			(int)GLOBAL_settings_ptr->AlarmTimeSnooze)
-
 	SettingsWrite();
+
+	CLI_Printf("\r\ntime to fade-in light: %s, time to signal: %s, snooze time: %d min.",
+			printMinuteOff(strf, GLOBAL_settings_ptr->LightFading),
+			printMinuteOff(strsi, GLOBAL_settings_ptr->AlarmTime2Signal),
+			(int)GLOBAL_settings_ptr->AlarmTimeSnooze);
 
 	return TE_OK;
 }
@@ -262,11 +288,42 @@ uint8_t AlarmScheduleCmd()
 				(int)GLOBAL_settings_ptr->Alarm[i].minute);
 
 		SettingsWrite();
+		Rtc_SetAlarm();
 
 		return TE_OK;
 	}
 	return TE_ArgErr;
 }
+
+uint8_t AlarmCmd()
+{
+	uint32_t skipcnt = 0;
+
+	// optional arguments
+	if (CLI_GetArgDecByFlag("-s", &skipcnt) & (skipcnt <=alarmState.maxskipAlarmCnt))
+	{
+		alarmState.skipAlarmCnt = skipcnt;
+		Rtc_SetAlarm();
+	}
+
+	if (noPendingAlarm == alarmState.nextAlarmIndex)
+	{
+		CLI_Printf("\r\nNo pending alarm.");
+	}
+	else
+	{
+		Rtc_GetAlarm();
+		CLI_Printf("\r\nNext alarm no %d\r\nweekday: %d %s\r\ntime: %02d:%02d",
+				(int)alarmState.nextAlarmIndex,
+				(int)alarmRtc.AlarmDateWeekDay,
+				WeekdayNames[alarmRtc.AlarmDateWeekDay],
+				(int)alarmRtc.AlarmTime.Hours,
+				(int)alarmRtc.AlarmTime.Minutes);
+		CLI_Printf("\r\nSkipping #%d, current maximum skip count %d", alarmState.skipAlarmCnt, alarmState.maxskipAlarmCnt);
+	}
+	return TE_OK;
+}
+
 
 uint8_t SetBeepVolumeCmd()
 {
@@ -283,12 +340,14 @@ uint8_t SetBeepVolumeCmd()
 	SettingsWrite();
 
 	return TE_OK;
-
 }
 
 uint8_t ResetSettingsCmd()
 {
 	CLI_Printf("\r\nReset settings to factory defaults.");
 	SettingsReset2Defaults();
+
+	Rtc_SetAlarm();
+
 	return TE_OK;
 }
