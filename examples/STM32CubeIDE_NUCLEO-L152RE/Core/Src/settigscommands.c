@@ -1,5 +1,7 @@
 #include <settingscommands.h>
 
+//TODO command for setting & reading current brightness, reading ext brightness
+
 void SettingsCommands_Init()
 {
 	CLI_AddCmd("bright", BrightnessCmd, 1, TMC_None, "set brightness values - [type] <-c channel_no> <-b brightness_value>");
@@ -10,7 +12,7 @@ void SettingsCommands_Init()
 	CLI_AddCmd("timestamp", GetTimestampCmd, 0, TMC_None, "get date and time from RTC");
 	CLI_AddCmd("alarmschedule", AlarmScheduleCmd, 1, TMC_None, "set alarm schedule - [alarm no] <-w weekday> <-h hour> <-m minute>");
 	CLI_AddCmd("alarmsetting", AlarmSettingsCmd, 0, TMC_None, "set alarm parameters - <-f time to fade-in light> <-si time to signal> <-sn snooze time>");
-	CLI_AddCmd("alarm", AlarmCmd, 0, TMC_None, "set alarm skip count - <-s alarm skip count>");
+	CLI_AddCmd("alarm", AlarmCmd, 0, TMC_None, "trigger, reset, set alarm skip count - <-a 1 | 0> <-s alarm skip count>");
 	CLI_AddCmd("beep", 	SetBeepVolumeCmd, 0, TMC_None, "set beep volume - <-v volume>");
 	CLI_AddCmd("reset", ResetSettingsCmd, 0, TMC_None, "reset settings to factory defaults");
 }
@@ -298,12 +300,18 @@ uint8_t AlarmScheduleCmd()
 uint8_t AlarmCmd()
 {
 	uint32_t skipcnt = 0;
+	uint32_t set = 0;
 
 	// optional arguments
 	if (CLI_GetArgDecByFlag("-s", &skipcnt) & (skipcnt <=alarmState.maxskipAlarmCnt))
 	{
 		alarmState.skipAlarmCnt = skipcnt;
 		Rtc_SetAlarm();
+	}
+
+	if (CLI_GetArgDecByFlag("-a", &set) & (set <=1))
+	{
+		alarmState.alarmFlag = (set == 1);
 	}
 
 	if (noPendingAlarm == alarmState.nextAlarmIndex)

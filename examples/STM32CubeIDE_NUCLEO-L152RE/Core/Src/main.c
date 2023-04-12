@@ -118,6 +118,16 @@ int main(void)
 		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 
 		CLI_Execute();
+		if (alarmState.alarmFlag)
+		{
+			alarmState.alarmFlag = false;
+			CLI_Printf("\r\nAlarm!");
+			Rtc_GetDateTime();
+			CLI_Printf("\r\nTimestamp: %02d-%02d-%02d %s %02d:%02d:%02d",
+					dateRtc.Date, dateRtc.Month, dateRtc.Date, WeekdayNames[dateRtc.WeekDay],
+					timeRtc.Hours, timeRtc.Minutes, timeRtc.Seconds)
+			Rtc_SetAlarm();
+		}
 
 		// Rinse and repeat :)
     /* USER CODE END WHILE */
@@ -218,6 +228,7 @@ static void MX_RTC_Init(void)
 
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef sDate = {0};
+  RTC_AlarmTypeDef sAlarm = {0};
 
   /* USER CODE BEGIN RTC_Init 1 */
 
@@ -258,6 +269,24 @@ static void MX_RTC_Init(void)
   sDate.Year = 23;
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Enable the Alarm A
+  */
+  sAlarm.AlarmTime.Hours = 0;
+  sAlarm.AlarmTime.Minutes = 0;
+  sAlarm.AlarmTime.Seconds = 0;
+  sAlarm.AlarmTime.SubSeconds = 0;
+  sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  sAlarm.AlarmMask = RTC_ALARMMASK_NONE;
+  sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
+  sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
+  sAlarm.AlarmDateWeekDay = 1;
+  sAlarm.Alarm = RTC_ALARM_A;
+  if (HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
   }
@@ -357,19 +386,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-/**
-  * @brief  User implementation of the Reception Event Callback
-  *         (Rx event notification called after use of advanced reception service).
-  * @param  huart UART handle
-  * @param  Size  Number of data available in application reception buffer (indicates a position in
-  *               reception buffer until which, data are available)
-  * @retval None
-  */
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-	TUSART_UARTEx_RxEventCallback(Size);
-}
 
 /* USER CODE END 4 */
 

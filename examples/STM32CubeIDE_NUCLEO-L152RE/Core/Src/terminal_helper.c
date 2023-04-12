@@ -76,6 +76,10 @@ void TUSART_StartReception(void)
 	pBufferReadyForUser      = aRXBufferB;
 	uwNbReceivedChars        = 0;
 
+//	HAL_StatusTypeDef HAL_UART_RegisterRxEventCallback(UART_HandleTypeDef *huart, pUART_RxEventCallbackTypeDef pCallback)
+	pUART_RxEventCallbackTypeDef pCallback = *HAL_UARTEx_RxEventCallback;
+	HAL_UART_RegisterRxEventCallback(huart_terminal, pCallback);
+
    /* Initializes Rx sequence using Reception To Idle event API.
      As DMA channel associated to UART Rx is configured as Circular,
      reception is endless.
@@ -121,7 +125,15 @@ void TUSART_ProcessInput(uint8_t* pData, uint16_t Size)
 
 }
 
-void TUSART_UARTEx_RxEventCallback(uint16_t Size)
+/**
+  * @brief  User implementation of the Reception Event Callback
+  *         (Rx event notification called after use of advanced reception service).
+  * @param  huart UART handle
+  * @param  Size  Number of data available in application reception buffer (indicates a position in
+  *               reception buffer until which, data are available)
+  * @retval None
+  */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   static uint8_t old_pos = 0;
   uint8_t *ptemp;

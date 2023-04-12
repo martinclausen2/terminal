@@ -1,6 +1,8 @@
 /*
  * terminal_helper.h
  *
+ * USE_HAL_UART_REGISTER_CALLBACKS must be set to on = 1U
+ *
  *  Created on: 30.12.2022
  *      Author: Martin
  */

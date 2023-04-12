@@ -7,6 +7,13 @@ RTC_AlarmTypeDef alarmRtc = {.Alarm = RTC_ALARM_A,
 
 alarmState_t alarmState = {0};
 
+HAL_StatusTypeDef Rtc_Init()
+{
+	pRTC_CallbackTypeDef pCallback = *Rtc_AlarmAEventCallback;
+	HAL_RTC_RegisterCallback(&hrtc, HAL_RTC_ALARM_A_EVENT_CB_ID , pCallback);
+	return Rtc_SetAlarm();
+}
+
 HAL_StatusTypeDef Rtc_GetDateTime()
 {
 	return HAL_ERROR & (HAL_RTC_GetTime(&hrtc, &timeRtc, RTC_FORMAT_BIN)
@@ -44,121 +51,10 @@ HAL_StatusTypeDef Rtc_SetAlarm()
 	return HAL_ERROR & status;
 }
 
-/*
-
-//stop count down to acustic alarm
-void AlarmEnd()
+void Rtc_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
-	Minutes2Signal=0;
-	RefreshTime=1;
+	alarmState.alarmFlag = true;
 }
-
-//menu to stop count down to acustic alarm
-void AlarmSnoozeEnd()
-{
-	unsigned long i;
-	unsigned char j = 0;			//set to "snooze" = 0
-
-	for(i=menutimeout; i; i--)
-		{
-		if (TimerFlag)
-			{
-			PWM_StepDim();		// do next dimming step to permit LCD backlight fadein to finish
-			TimerFlag=0;
-			}
-
-		if((!CheckKeyPressed()) || ((12==rCounter) && (RC5Addr==rAddress || RC5Addr_front==rAddress || RC5Addr_back==rAddress || RC5Addr_com==rAddress)))
-			{
-			break;			//exit on key pressed or RC5 command received
-			}
-		else if (EncoderSetupValue(&j, maxAlarmEndMode,0))
-			{
-			i=menutimeout;		//reset timeout due to user action
-			}
-		PCON=MCUIdle;			//go idel, wake up by any int
-		}
-	// 0==j, nothing to do: timeout, RC5 command received or user keeps snooze
-	// 0==i, timeout
-	if (0!=j && 0!=i)			//end alarm
-		{
-		AlarmEnd();
-		if (2==j || 4==j)
-			{			//send end alarm via RC5, send anyway since use selected to do so
-			SendRC5(RC5Addr_com, RC5Cmd_AlarmEnd, 1, ComModeOff, RC5Cmd_Repeats);
-			}
-		if (4==j)
-			{			//send standby via RC5, send anyway since use selected to do so
-			CommandPause();		//wait after sending AlarmEnd required
-			SendRC5(RC5Addr_com, RC5Cmd_Off, 1, ComModeOff, RC5Cmd_Repeats);
-			}
-		if (3<=j)
-			{			//goto standby
-			SwAllLightOff();
-			}
-		if (3>j)
-			{
-			LCD_SendBrightness(FocusBacklight+1);
-			}
-		}
-	RefreshTime=1;
-}
-
-//wake-up light dimming
-void Alarm_StepDim(unsigned char i)
-{
-	if (AlarmDim_Cnt[i])
-		{
-		--AlarmDim_Cnt[i];				//count down step
-		}
-	else							//dimming step
-		{
-		if (Brightness[i+1] < Read_EEPROM(EEAddr_AlarmFrontBrightness+i))
-			{
-			AlarmDim_Cnt[i]=AlarmDim_Cnt_Reload[i];	//reload countdown
-			PWM_SetupDim(i+1, Brightness_steps, 1);	//setup brightness
-			}
-		else
-			{
-			Alarmflag=0;				//we reached targetbrightness!
-			}
-		}
-}
-
-//wake-up light active
-void Alarm_StepDim_all()
-{
-	if (Alarmflag)
-		{
-		Alarm_StepDim(0);
-		Alarm_StepDim(1);
-		}
-}
-
-//prepare wake-up light
-void SetupAlarmDim(unsigned char i)
-{
-	AlarmDim_Cnt_Reload[i]=(Read_EEPROM(EEAddr_LightFading)*RTCIntfrequ*60)/Read_EEPROM(EEAddr_AlarmFrontBrightness+i);
-	AlarmDim_Cnt[i]=AlarmDim_Cnt_Reload[i];
-}
-
-
-//execute an alarm
-void Alarm()
-{
-	if (0==Alarmflag)
-		{
-		SendRC5(RC5Addr_com, RC5Cmd_AlarmStart, 1, ComModeAlarm, RC5Cmd_Repeats);
-		SetupAlarmDim(0);		// fade in to required brightness in on or off,
-					// no fade in if already brighter, Alarm_StepDim() takes care of this behavior
-		SetupAlarmDim(1);
-		LightOn=1;
-		Alarmflag=1;
-		Minutes2Signal=Read_EEPROM(EEAddr_AlarmTime2Signal);
-		}
-}
-
-*/
-
 
 //Checks for the next alarm, returns -1 if no alarm was found
 //considers skipAlarmCnt, not fast, but memory effective
