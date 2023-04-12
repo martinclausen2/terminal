@@ -106,7 +106,7 @@ int main(void)
 
   Init_Terminal(&huart2);
   SettingsCommands_Init();
-  Rtc_SetAlarm();
+  Rtc_Init();
 
   /* USER CODE END 2 */
 
