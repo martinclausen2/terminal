@@ -41,7 +41,8 @@ void split(char* strSrc, const char* separator, Params_s* dst)
             }
         }
 
-        if (strSrc[co] == '\0')
+        // check for end of string or maximum or arguments
+        if ((strSrc[co] == '\0') ||  (co_arg == TERM_ARGS_BUF_SIZE))
             break;
 
         co++;

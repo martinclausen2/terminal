@@ -39,7 +39,7 @@
 
 extern void _reset_fcn();
 #define _TERM_VER_				"v1.4"				// Terminal version
-#define TERM_SIZE_TASK          (20)				// Max number of commands
+#define TERM_SIZE_TASK          (24)				// Max number of commands
 #define TERM_CMD_BUF_SIZE		(60)				// Max number of character buffer string command
 #define TERM_CMD_LOG_SIZE		(10)				// Max number of logging command
 #define TERM_ARGS_BUF_SIZE		(10)				// Max number of arguments in one command
@@ -49,7 +49,7 @@ extern void _reset_fcn();
 #define STRING_TERM_ARROW		">> "				// String arrow enter
 #define RESET_FCN				_reset_fcn			// Reset CPU Function
 
-#define TERM_TIMELEFT_EN				(1)			// Calculate time
+#define TERM_TIMELEFT_EN				(0)			// Calculate time
 #define TERM_TX_RX_EN					(1)			// Terminal Printf (without this don,t work)
 #define TERM_TX_RX_DEB_EN				(0)			// Addition debug printf
 #define TERM_CMD_LOG_EN					(1)			// Command logging
