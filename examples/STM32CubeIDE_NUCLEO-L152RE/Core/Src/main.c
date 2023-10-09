@@ -128,8 +128,8 @@ int main(void)
 					timeRtc.Hours, timeRtc.Minutes, timeRtc.Seconds)
 			Rtc_SetAlarm();
 		}
-
-		// Rinse and repeat :)
+		Execute_Terminal();
+		HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
